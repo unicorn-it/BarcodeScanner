@@ -16,21 +16,24 @@
 
 package com.google.zxing.client.android;
 
-import com.google.zxing.ResultPoint;
-import com.google.zxing.client.android.camera.CameraManager;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
-import com.google.zxing.FakeR;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.zxing.FakeR;
+import com.google.zxing.ResultPoint;
+import com.google.zxing.client.android.camera.CameraManager;
 
 /**
  * This view is overlaid on top of the camera preview. It adds the viewfinder rectangle and partial
@@ -58,6 +61,10 @@ public final class ViewfinderView extends View {
   private List<ResultPoint> lastPossibleResultPoints;
 
   private static FakeR fakeR;
+  
+	private Rect mRect;// 扫描线填充边界
+	private int i = 0;// 添加的	
+	private Drawable lineDrawable;// 采用图片作为扫描线	
 
   // This constructor is used when the class is built from an XML resource.
   public ViewfinderView(Context context, AttributeSet attrs) {
@@ -73,6 +80,10 @@ public final class ViewfinderView extends View {
     laserColor = resources.getColor(fakeR.getId("color", "viewfinder_laser"));
     resultPointColor = resources.getColor(fakeR.getId("color", "possible_result_points"));
     scannerAlpha = 0;
+    
+    mRect = new Rect();
+    lineDrawable = getResources().getDrawable(R.drawable.zx_code_line);
+    
     possibleResultPoints = new ArrayList<ResultPoint>(5);
     lastPossibleResultPoints = null;
   }
@@ -105,13 +116,51 @@ public final class ViewfinderView extends View {
       paint.setAlpha(CURRENT_POINT_OPACITY);
       canvas.drawBitmap(resultBitmap, null, frame, paint);
     } else {
+    	Paint paintLine = new Paint(Paint.ANTI_ALIAS_FLAG);
+		paintLine.setColor(Color.GRAY);
+		paintLine.setStyle(Paint.Style.STROKE);
+		canvas.drawRect(frame.left, frame.top, frame.right,
+				frame.bottom, paintLine);
+    	//画扫描框边上的角，总共8个部分
+    	 Point screenResolution = cameraManager.getScreen();
+         int ScreenRate=screenResolution.x/20;
+         int CORNER_WIDTH=screenResolution.x/80;
+		paint.setColor(Color.GREEN);
+		canvas.drawRect(frame.left, frame.top, frame.left + ScreenRate,
+				frame.top + CORNER_WIDTH, paint);
+		canvas.drawRect(frame.left, frame.top, frame.left + CORNER_WIDTH, frame.top
+				+ ScreenRate, paint);
+		canvas.drawRect(frame.right - ScreenRate, frame.top, frame.right,
+				frame.top + CORNER_WIDTH, paint);
+		canvas.drawRect(frame.right - CORNER_WIDTH, frame.top, frame.right, frame.top
+				+ ScreenRate, paint);
+		canvas.drawRect(frame.left, frame.bottom - CORNER_WIDTH, frame.left
+				+ ScreenRate, frame.bottom, paint);
+		canvas.drawRect(frame.left, frame.bottom - ScreenRate,
+				frame.left + CORNER_WIDTH, frame.bottom, paint);
+		canvas.drawRect(frame.right - ScreenRate, frame.bottom - CORNER_WIDTH,
+				frame.right, frame.bottom, paint);
+		canvas.drawRect(frame.right - CORNER_WIDTH, frame.bottom - ScreenRate,
+				frame.right, frame.bottom, paint);	
+		if ((i += 5) < frame.bottom - frame.top) {				
+			mRect.set(frame.left - 6, frame.top + i - 6, frame.right + 6,
+					frame.top + 6 + i);
+			lineDrawable.setBounds(mRect);
+			lineDrawable.draw(canvas);
 
+			// 刷新
+			invalidate();
+		} else {
+			i = 0;
+		}
+    	
+    	
       // Draw a red "laser scanner" line through the middle to show decoding is active
-      paint.setColor(laserColor);
+      /*paint.setColor(laserColor);
       paint.setAlpha(SCANNER_ALPHA[scannerAlpha]);
       scannerAlpha = (scannerAlpha + 1) % SCANNER_ALPHA.length;
       int middle = frame.height() / 2 + frame.top;
-      canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);
+      canvas.drawRect(frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint);*/
       
       Rect previewFrame = cameraManager.getFramingRectInPreview();
       float scaleX = frame.width() / (float) previewFrame.width();

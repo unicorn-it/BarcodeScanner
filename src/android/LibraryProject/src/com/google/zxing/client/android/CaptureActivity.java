@@ -16,19 +16,15 @@
 
 package com.google.zxing.client.android;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.Result;
-import com.google.zxing.ResultMetadataType;
-import com.google.zxing.ResultPoint;
-import com.google.zxing.client.android.camera.CameraManager;
-import com.google.zxing.client.android.history.HistoryActivity;
-import com.google.zxing.client.android.history.HistoryItem;
-import com.google.zxing.client.android.history.HistoryManager;
-import com.google.zxing.client.android.result.ResultButtonListener;
-import com.google.zxing.client.android.result.ResultHandler;
-import com.google.zxing.client.android.result.ResultHandlerFactory;
-import com.google.zxing.client.android.result.supplement.SupplementalInfoRetriever;
-import com.google.zxing.client.android.share.ShareActivity;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.util.Collection;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -46,6 +42,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -60,18 +57,20 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-import com.google.zxing.FakeR;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.DateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.FakeR;
+import com.google.zxing.Result;
+import com.google.zxing.ResultMetadataType;
+import com.google.zxing.ResultPoint;
+import com.google.zxing.client.android.camera.CameraManager;
+import com.google.zxing.client.android.history.HistoryActivity;
+import com.google.zxing.client.android.history.HistoryItem;
+import com.google.zxing.client.android.history.HistoryManager;
+import com.google.zxing.client.android.result.ResultButtonListener;
+import com.google.zxing.client.android.result.ResultHandler;
+import com.google.zxing.client.android.result.supplement.SupplementalInfoRetriever;
+import com.google.zxing.client.android.share.ShareActivity;
 
 /**
  * This activity opens the camera and does the actual scanning on a background thread. It draws a
@@ -406,7 +405,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
    * @param barcode   A greyscale bitmap of the camera data which was decoded.
    */
   public void handleDecode(Result rawResult, Bitmap barcode) {
-    inactivityTimer.onActivity();
+    /*inactivityTimer.onActivity();
     lastResult = rawResult;
     ResultHandler resultHandler = ResultHandlerFactory.makeResultHandler(this, rawResult);
 
@@ -442,7 +441,26 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
           handleDecodeInternally(rawResult, resultHandler, barcode);
         }
         break;
-    }
+    }*/
+	  String result = rawResult.getText(); 
+
+      if (!TextUtils.isEmpty(result)) { 
+
+          Intent intent = new Intent(); 
+
+          intent.putExtra("SCAN_RESULT", rawResult.getText());
+
+          intent.putExtra("SCAN_RESULT_FORMAT", rawResult.getBarcodeFormat().toString());     
+
+          setResult(RESULT_OK, intent); 
+
+      } else { 
+
+          setResult(RESULT_CANCELED); 
+
+      } 
+
+      finish();
   }
 
   /**

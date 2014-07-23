@@ -16,6 +16,13 @@
 
 package com.google.zxing.client.android.camera;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Point;
@@ -26,12 +33,6 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.google.zxing.client.android.PreferencesActivity;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * A class which deals with reading, parsing, and setting the camera parameters which are used to
@@ -66,12 +67,12 @@ final class CameraConfigurationManager {
     int height = display.getHeight();
     // We're landscape-only, and have apparently seen issues with display thinking it's portrait 
     // when waking from sleep. If it's not landscape, assume it's mistaken and reverse them:
-    if (width < height) {
+    /*if (width < height) {
       Log.i(TAG, "Display reports portrait orientation; assuming this is incorrect");
       int temp = width;
       width = height;
       height = temp;
-    }
+    }*/
     screenResolution = new Point(width, height);
     Log.i(TAG, "Screen resolution: " + screenResolution);
     cameraResolution = findBestPreviewSizeValue(parameters, screenResolution);
@@ -119,6 +120,7 @@ final class CameraConfigurationManager {
     }
 
     parameters.setPreviewSize(cameraResolution.x, cameraResolution.y);
+    setDisplayOrientation(camera, 90);
     camera.setParameters(parameters);
   }
 
@@ -260,5 +262,17 @@ final class CameraConfigurationManager {
     Log.i(TAG, "Settable value: " + result);
     return result;
   }
+  
+  protected void setDisplayOrientation(Camera camera, int angle){ 
+      Method downPolymorphic; 
+      try{ 
+         downPolymorphic = camera.getClass().getMethod("setDisplayOrientation",new Class[] {int.class }); 
+          if (downPolymorphic!=null) 
+             downPolymorphic.invoke(camera, new Object[] { angle }); 
+      } 
+      catch (Exception e1){ 
+
+      } 
+ }
 
 }
