@@ -106,6 +106,7 @@
         <source-file src="src/android/LibraryProject/res/drawable/shopper_icon.png" target-dir="res/drawable"/>
         <source-file src="src/android/LibraryProject/res/drawable-hdpi/launcher_icon.png" target-dir="res/drawable-hdpi"/>
         <source-file src="src/android/LibraryProject/res/drawable-hdpi/shopper_icon.png" target-dir="res/drawable-hdpi"/>
+        <source-file src="src/android/LibraryProject/res/drawable-hdpi/zx_code_line.png" target-dir="res/drawable-hdpi"/>
         <source-file src="src/android/LibraryProject/res/drawable-xhdpi/launcher_icon.png" target-dir="res/drawable-xhdpi"/>
         <source-file src="src/android/LibraryProject/res/drawable-xxhdpi/launcher_icon.png" target-dir="res/drawable-xxhdpi"/>
         <source-file src="src/android/LibraryProject/res/layout/bookmark_picker_list_item.xml" target-dir="res/layout"/>
