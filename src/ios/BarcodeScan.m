@@ -127,7 +127,7 @@
     labIntroudction.backgroundColor = [UIColor clearColor];
     labIntroudction.numberOfLines=2;
     labIntroudction.textColor=[UIColor whiteColor];
-    labIntroudction.text=@"将条形码或者二维码图像置于矩形方框内，离手机摄像头10CM左右。";
+    labIntroudction.text=@"将条码/二维码置于框内，保持10CM左右，即可自动扫描";
     [self.view addSubview:labIntroudction];
     
     
