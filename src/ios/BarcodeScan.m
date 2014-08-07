@@ -179,8 +179,15 @@
 
 - (void)setupCamera
 {
+    NSError *error = nil;
     // Device
     _device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    if (_device.isAutoFocusRangeRestrictionSupported) {
+        if ([_device lockForConfiguration:&error]) {
+            [_device setAutoFocusRangeRestriction:AVCaptureAutoFocusRangeRestrictionNear];
+            [_device unlockForConfiguration];
+        }
+    }
     
     // Input
     _input = [AVCaptureDeviceInput deviceInputWithDevice:self.device error:nil];
