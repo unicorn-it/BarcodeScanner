@@ -127,7 +127,7 @@
     labIntroudction.backgroundColor = [UIColor clearColor];
     labIntroudction.numberOfLines=2;
     labIntroudction.textColor=[UIColor whiteColor];
-    labIntroudction.text=@"将条码/二维码置于框内，即可自动扫描";
+    labIntroudction.text=@"将条码/二维码置于框内";
     [self.view addSubview:labIntroudction];
     
     
@@ -191,7 +191,7 @@
     
     // Session
     _session = [[AVCaptureSession alloc]init];
-    [_session setSessionPreset:AVCaptureSessionPresetLow];
+    [_session setSessionPreset:AVCaptureSessionPresetHigh];
     if ([_session canAddInput:self.input])
     {
         [_session addInput:self.input];
