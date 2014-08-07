@@ -127,7 +127,7 @@
     labIntroudction.backgroundColor = [UIColor clearColor];
     labIntroudction.numberOfLines=2;
     labIntroudction.textColor=[UIColor whiteColor];
-    labIntroudction.text=@"将条码/二维码置于框内，保持10CM左右，即可自动扫描";
+    labIntroudction.text=@"将条码/二维码置于框内，即可自动扫描";
     [self.view addSubview:labIntroudction];
     
     
@@ -191,7 +191,7 @@
     
     // Session
     _session = [[AVCaptureSession alloc]init];
-    [_session setSessionPreset:AVCaptureSessionPresetHigh];
+    [_session setSessionPreset:AVCaptureSessionPresetLow];
     if ([_session canAddInput:self.input])
     {
         [_session addInput:self.input];
@@ -203,10 +203,12 @@
     }
     
     // 条码类型 AVMetadataObjectTypeQRCode
-    _output.metadataObjectTypes =@[AVMetadataObjectTypeQRCode, AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeCode39Code,
-                                   AVMetadataObjectTypeCode93Code, AVMetadataObjectTypeCode128Code, AVMetadataObjectTypeCode39Mod43Code,
-                                   AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code, AVMetadataObjectTypePDF417Code,
-                                   AVMetadataObjectTypeAztecCode];
+    //_output.metadataObjectTypes =@[AVMetadataObjectTypeQRCode, AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeCode39Code,
+    //                               AVMetadataObjectTypeCode93Code, AVMetadataObjectTypeCode128Code, AVMetadataObjectTypeCode39Mod43Code,
+    //                               AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code, AVMetadataObjectTypePDF417Code,
+    //                               AVMetadataObjectTypeAztecCode];
+                                   
+    _output.metadataObjectTypes =@[AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code];
     
     // Preview
     _preview =[AVCaptureVideoPreviewLayer layerWithSession:self.session];
