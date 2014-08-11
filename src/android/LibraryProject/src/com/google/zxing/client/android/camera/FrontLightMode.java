@@ -14,17 +14,30 @@
  * limitations under the License.
  */
 
-package com.google.zxing.client.android.camera.exposure;
+package com.google.zxing.client.android.camera;
 
-import android.hardware.Camera;
+import android.content.SharedPreferences;
+import com.google.zxing.client.android.config.Config;
 
 /**
- * Implementations control auto-exposure settings of the camera, if available.
- * 
- * @author Sean Owen
+ * Enumerates settings of the prefernce controlling the front light.
  */
-public interface ExposureInterface {
+public enum FrontLightMode {
 
-  void setExposure(Camera.Parameters parameters, boolean lightOn);
+	/** Always on. */
+	ON,
+	/** On only when ambient light is low. */
+	AUTO,
+	/** Always off. */
+	OFF;
+
+	private static FrontLightMode parse(String modeString) {
+		return modeString == null ? OFF : valueOf(modeString);
+	}
+
+	public static FrontLightMode readPref(SharedPreferences sharedPrefs) {
+		return parse(sharedPrefs.getString(
+				Config.KEY_FRONT_LIGHT_MODE, null));
+	}
 
 }
