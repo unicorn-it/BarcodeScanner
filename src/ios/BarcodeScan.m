@@ -127,7 +127,7 @@
     labIntroudction.backgroundColor = [UIColor clearColor];
     labIntroudction.numberOfLines=2;
     labIntroudction.textColor=[UIColor whiteColor];
-    labIntroudction.text=@"将条形码或者二维码图像置于矩形方框内，离手机摄像头10CM左右。";
+    labIntroudction.text=@"将条码/二维码置于框内";
     [self.view addSubview:labIntroudction];
     
     
@@ -179,8 +179,15 @@
 
 - (void)setupCamera
 {
+    NSError *error = nil;
     // Device
     _device = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    if (_device.isAutoFocusRangeRestrictionSupported) {
+        if ([_device lockForConfiguration:&error]) {
+            [_device setAutoFocusRangeRestriction:AVCaptureAutoFocusRangeRestrictionNear];
+            [_device unlockForConfiguration];
+        }
+    }
     
     // Input
     _input = [AVCaptureDeviceInput deviceInputWithDevice:self.device error:nil];
@@ -203,10 +210,12 @@
     }
     
     // 条码类型 AVMetadataObjectTypeQRCode
-    _output.metadataObjectTypes =@[AVMetadataObjectTypeQRCode, AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeCode39Code,
-                                   AVMetadataObjectTypeCode93Code, AVMetadataObjectTypeCode128Code, AVMetadataObjectTypeCode39Mod43Code,
-                                   AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code, AVMetadataObjectTypePDF417Code,
-                                   AVMetadataObjectTypeAztecCode];
+    //_output.metadataObjectTypes =@[AVMetadataObjectTypeQRCode, AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeCode39Code,
+    //                               AVMetadataObjectTypeCode93Code, AVMetadataObjectTypeCode128Code, AVMetadataObjectTypeCode39Mod43Code,
+    //                               AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code, AVMetadataObjectTypePDF417Code,
+    //                               AVMetadataObjectTypeAztecCode];
+                                   
+    _output.metadataObjectTypes =@[AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code];
     
     // Preview
     _preview =[AVCaptureVideoPreviewLayer layerWithSession:self.session];
