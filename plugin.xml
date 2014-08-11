@@ -104,7 +104,9 @@
         -->
         
         <source-file src="src/android/LibraryProject/res/drawable/share_via_barcode.png" target-dir="res/drawable"/>
+        <source-file src="src/android/LibraryProject/res/drawable/shopper_icon.png" target-dir="res/drawable"/>
         <source-file src="src/android/LibraryProject/res/drawable-hdpi/zx_code_line.png" target-dir="res/drawable-hdpi"/>
+        <source-file src="src/android/LibraryProject/res/drawable-hdpi/shopper_icon.png" target-dir="res/drawable-hdpi"/>
         <source-file src="src/android/LibraryProject/res/layout/capture.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout-ldpi/capture.xml" target-dir="res/layout-ldpi"/>
         <source-file src="src/android/LibraryProject/res/raw/beep.ogg" target-dir="res/raw"/>
