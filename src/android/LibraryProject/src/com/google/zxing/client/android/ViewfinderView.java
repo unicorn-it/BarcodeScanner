@@ -15,10 +15,10 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.view.View;
-import com.google.zxing.client.android.R;
-import com.google.zxing.client.android.camera.CameraManager;
 
+import com.google.zxing.FakeR;
 import com.google.zxing.ResultPoint;
+import com.google.zxing.client.android.camera.CameraManager;
 
 /**
  * This view is overlaid on top of the camera preview. It adds the viewfinder
@@ -34,6 +34,7 @@ import com.google.zxing.ResultPoint;
  */
 public final class ViewfinderView extends View {
 
+	private static FakeR fakeR;
 	/**
 	 * 刷新界面的时间
 	 */
@@ -98,6 +99,8 @@ public final class ViewfinderView extends View {
 	public ViewfinderView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 
+		fakeR = new FakeR(context);
+		
 		CORNER_PADDING = dip2px(context, 0.0F);
 		MIDDLE_LINE_PADDING = dip2px(context, 20.0F);
 		MIDDLE_LINE_WIDTH = dip2px(context, 3.0F);
@@ -105,10 +108,10 @@ public final class ViewfinderView extends View {
 		paint = new Paint(Paint.ANTI_ALIAS_FLAG); // 开启反锯齿
 
 		Resources resources = getResources();
-		maskColor = resources.getColor(R.color.viewfinder_mask); // 遮掩层颜色
-		resultColor = resources.getColor(R.color.result_view);
+		maskColor = resources.getColor(fakeR.getId("color", "viewfinder_mask")); // 遮掩层颜色
+		resultColor = resources.getColor(fakeR.getId("color", "result_view"));
 
-		resultPointColor = resources.getColor(R.color.possible_result_points);
+		resultPointColor = resources.getColor(fakeR.getId("color", "possible_result_points"));
 		possibleResultPoints = new ArrayList<ResultPoint>(5);
 		lastPossibleResultPoints = null;
 
@@ -204,7 +207,7 @@ public final class ViewfinderView extends View {
 		lineRect.top = slideTop;
 		lineRect.bottom = (slideTop + MIDDLE_LINE_WIDTH);
 		canvas.drawBitmap(((BitmapDrawable) (BitmapDrawable) getResources()
-				.getDrawable(R.drawable.scan_laser)).getBitmap(), null,
+				.getDrawable(fakeR.getId("drawable", "scan_laser"))).getBitmap(), null,
 				lineRect, paint);
 
 	}
@@ -249,13 +252,13 @@ public final class ViewfinderView extends View {
 		 * 这些资源可以用缓存进行管理，不需要每次刷新都新建
 		 */
 		Bitmap bitmapCornerTopleft = BitmapFactory.decodeResource(resources,
-				R.drawable.scan_corner_top_left);
+				fakeR.getId("drawable", "scan_corner_top_left"));
 		Bitmap bitmapCornerTopright = BitmapFactory.decodeResource(resources,
-				R.drawable.scan_corner_top_right);
+				fakeR.getId("drawable", "scan_corner_top_right"));
 		Bitmap bitmapCornerBottomLeft = BitmapFactory.decodeResource(resources,
-				R.drawable.scan_corner_bottom_left);
+				fakeR.getId("drawable", "scan_corner_bottom_left"));
 		Bitmap bitmapCornerBottomRight = BitmapFactory.decodeResource(
-				resources, R.drawable.scan_corner_bottom_right);
+				resources, fakeR.getId("drawable", "scan_corner_bottom_right"));
 
 		canvas.drawBitmap(bitmapCornerTopleft, frame.left + CORNER_PADDING,
 				frame.top + CORNER_PADDING, paint);

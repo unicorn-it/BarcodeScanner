@@ -31,6 +31,7 @@ import com.google.zxing.client.android.decode.BitmapDecoder;
 import com.google.zxing.client.android.decode.CaptureActivityHandler;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.FakeR;
 import com.google.zxing.Result;
 import com.google.zxing.client.result.ResultParser;
 
@@ -49,6 +50,8 @@ import com.google.zxing.client.result.ResultParser;
 public final class CaptureActivity extends Activity implements
 		SurfaceHolder.Callback, View.OnClickListener {
 
+	private static FakeR fakeR;
+	
 	private static final String TAG = CaptureActivity.class.getSimpleName();
 
 	private static final int REQUEST_CODE = 100;
@@ -159,9 +162,12 @@ public final class CaptureActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		fakeR = new FakeR(this);
+		
 		Window window = getWindow();
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		setContentView(R.layout.capture);
+		setContentView(fakeR.getId("layout", "capture"));
+		
 
 		hasSurface = false;
 		inactivityTimer = new InactivityTimer(this);
@@ -169,9 +175,9 @@ public final class CaptureActivity extends Activity implements
 		ambientLightManager = new AmbientLightManager(this);
 
 		// 监听图片识别按钮
-		// findViewById(R.id.capture_scan_photo).setOnClickListener(this);
+		// findViewById(fakeR.getId("id", "capture_scan_photo")).setOnClickListener(this);
 
-		findViewById(R.id.capture_flashlight).setOnClickListener(this);
+		findViewById(fakeR.getId("id", "capture_flashlight")).setOnClickListener(this);
 
 	}
 
@@ -192,7 +198,7 @@ public final class CaptureActivity extends Activity implements
 		// 会导致扫描窗口的尺寸计算有误的bug
 		cameraManager = new CameraManager(getApplication());
 
-		viewfinderView = (ViewfinderView) findViewById(R.id.capture_viewfinder_view);
+		viewfinderView = (ViewfinderView) findViewById(fakeR.getId("id", "capture_viewfinder_view"));
 		viewfinderView.setCameraManager(cameraManager);
 
 		handler = null;
@@ -201,7 +207,7 @@ public final class CaptureActivity extends Activity implements
 		// 摄像头预览功能必须借助SurfaceView，因此也需要在一开始对其进行初始化
 		// 如果需要了解SurfaceView的原理
 		// 参考:http://blog.csdn.net/luoshengyang/article/details/8661317
-		SurfaceView surfaceView = (SurfaceView) findViewById(R.id.capture_preview_view); // 预览
+		SurfaceView surfaceView = (SurfaceView) findViewById(fakeR.getId("id", "capture_preview_view")); // 预览
 		SurfaceHolder surfaceHolder = surfaceView.getHolder();
 		if (hasSurface) {
 			// The activity was paused but not stopped, so the surface still
@@ -246,7 +252,7 @@ public final class CaptureActivity extends Activity implements
 		// 关闭摄像头
 		cameraManager.closeDriver();
 		if (!hasSurface) {
-			SurfaceView surfaceView = (SurfaceView) findViewById(R.id.capture_preview_view);
+			SurfaceView surfaceView = (SurfaceView) findViewById(fakeR.getId("id", "capture_preview_view"));
 			SurfaceHolder surfaceHolder = surfaceView.getHolder();
 			surfaceHolder.removeCallback(this);
 		}
@@ -410,7 +416,7 @@ public final class CaptureActivity extends Activity implements
 
 	public void restartPreviewAfterDelay(long delayMS) {
 		if (handler != null) {
-			handler.sendEmptyMessageDelayed(R.id.restart_preview, delayMS);
+			handler.sendEmptyMessageDelayed(fakeR.getId("id", "restart_preview"), delayMS);
 		}
 		resetStatusView();
 	}
@@ -485,7 +491,7 @@ public final class CaptureActivity extends Activity implements
 			}
 			if (savedResultToShow != null) {
 				Message message = Message.obtain(handler,
-						R.id.decode_succeeded, savedResultToShow);
+						fakeR.getId("id", "decode_succeeded"), savedResultToShow);
 				handler.sendMessage(message);
 			}
 			savedResultToShow = null;
@@ -494,9 +500,9 @@ public final class CaptureActivity extends Activity implements
 
 	private void displayFrameworkBugMessageAndExit() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(getString(R.string.app_name));
-		builder.setMessage(getString(R.string.msg_camera_framework_bug));
-		builder.setPositiveButton(R.string.button_ok, new FinishListener(this));
+		builder.setTitle(getString(fakeR.getId("string", "app_name")));
+		builder.setMessage(getString(fakeR.getId("string", "msg_camera_framework_bug")));
+		builder.setPositiveButton(fakeR.getId("string", "button_ok"), new FinishListener(this));
 		builder.setOnCancelListener(new FinishListener(this));
 		builder.show();
 	}
@@ -504,7 +510,7 @@ public final class CaptureActivity extends Activity implements
 	@Override
 	public void onClick(View v) {
 		int id = v.getId();
-//		if (id == R.id.capture_scan_photo) {
+//		if (id == fakeR.getId("id", "capture_scan_photo")) {
 //			// 打开手机中的相册
 //			Intent innerIntent = new Intent(Intent.ACTION_GET_CONTENT); // "android.intent.action.GET_CONTENT"
 //			innerIntent.setType("image/*");
@@ -512,7 +518,7 @@ public final class CaptureActivity extends Activity implements
 //					"选择二维码图片");
 //			this.startActivityForResult(wrapperIntent, REQUEST_CODE);
 //		} else 
-		if (id == R.id.capture_flashlight) {
+		if (id == fakeR.getId("id", "capture_flashlight")) {
 			if (isFlashlightOpen) {
 				cameraManager.setTorch(false); // 关闭闪光灯
 				isFlashlightOpen = false;

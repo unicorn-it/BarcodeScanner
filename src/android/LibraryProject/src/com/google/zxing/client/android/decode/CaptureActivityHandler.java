@@ -33,13 +33,13 @@ import android.os.Message;
 import android.provider.Browser;
 import android.util.Log;
 
-import com.google.zxing.client.android.CaptureActivity;
-import com.google.zxing.client.android.R;
-import com.google.zxing.client.android.ViewfinderResultPointCallback;
-import com.google.zxing.client.android.camera.CameraManager;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.FakeR;
 import com.google.zxing.Result;
+import com.google.zxing.client.android.CaptureActivity;
+import com.google.zxing.client.android.ViewfinderResultPointCallback;
+import com.google.zxing.client.android.camera.CameraManager;
 
 /**
  * This class handles all the messaging which comprises the state machine for
@@ -80,11 +80,14 @@ public final class CaptureActivityHandler extends Handler {
 		 */
 		DONE
 	}
+	
+	private static FakeR fakeR;
 
 	public CaptureActivityHandler(CaptureActivity activity,
 			Collection<BarcodeFormat> decodeFormats,
 			Map<DecodeHintType, ?> baseHints, String characterSet,
 			CameraManager cameraManager) {
+		fakeR = new FakeR(activity);
 		this.activity = activity;
 
 		// 启动扫描线程
@@ -106,10 +109,10 @@ public final class CaptureActivityHandler extends Handler {
 
 	@Override
 	public void handleMessage(Message message) {
-		if (message.what == R.id.restart_preview) {
+		if (message.what == fakeR.getId("id", "restart_preview")) {
 			Log.d(TAG, "Got restart preview message");
 			restartPreviewAndDecode();
-		} else if (message.what == R.id.decode_succeeded) {
+		} else if (message.what == fakeR.getId("id", "decode_succeeded")) {
 			Log.d(TAG, "Got decode succeeded message");
 			state = State.SUCCESS;
 			Bundle bundle = message.getData();
@@ -130,17 +133,17 @@ public final class CaptureActivityHandler extends Handler {
 			}
 			activity.handleDecode((Result) message.obj, barcode,
 					scaleFactor);
-		} else if (message.what == R.id.decode_failed) {
+		} else if (message.what == fakeR.getId("id", "decode_failed")) {
 			// We're decoding as fast as possible, so when one decode fails,
 			// start another.
 			state = State.PREVIEW;
 			cameraManager.requestPreviewFrame(decodeThread.getHandler(),
-					R.id.decode);
-		} else if (message.what == R.id.return_scan_result) {
+					fakeR.getId("id", "decode"));
+		} else if (message.what == fakeR.getId("id", "return_scan_result")) {
 			Log.d(TAG, "Got return scan result message");
 			activity.setResult(Activity.RESULT_OK, (Intent) message.obj);
 			activity.finish();
-		} else if (message.what == R.id.launch_product_query) {
+		} else if (message.what == fakeR.getId("id", "launch_product_query")) {
 			Log.d(TAG, "Got product query message");
 			String url = (String) message.obj;
 			Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -178,7 +181,7 @@ public final class CaptureActivityHandler extends Handler {
 	public void quitSynchronously() {
 		state = State.DONE;
 		cameraManager.stopPreview();
-		Message quit = Message.obtain(decodeThread.getHandler(), R.id.quit);
+		Message quit = Message.obtain(decodeThread.getHandler(), fakeR.getId("id", "quit"));
 		quit.sendToTarget();
 
 		try {
@@ -191,8 +194,8 @@ public final class CaptureActivityHandler extends Handler {
 		}
 
 		// Be absolutely sure we don't send any queued up messages
-		removeMessages(R.id.decode_succeeded);
-		removeMessages(R.id.decode_failed);
+		removeMessages(fakeR.getId("id", "decode_succeeded"));
+		removeMessages(fakeR.getId("id", "decode_failed"));
 	}
 
 	/**
@@ -204,7 +207,7 @@ public final class CaptureActivityHandler extends Handler {
 
 			// 向decodeThread绑定的handler（DecodeHandler)发送解码消息
 			cameraManager.requestPreviewFrame(decodeThread.getHandler(),
-					R.id.decode);
+					fakeR.getId("id", "decode"));
 			activity.drawViewfinder();
 		}
 	}

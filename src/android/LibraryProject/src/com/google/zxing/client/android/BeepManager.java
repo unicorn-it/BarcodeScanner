@@ -27,6 +27,8 @@ import android.media.MediaPlayer;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.google.zxing.FakeR;
 import com.google.zxing.client.android.config.Config;
 
 /**
@@ -48,8 +50,11 @@ final class BeepManager implements MediaPlayer.OnCompletionListener,
 	private boolean playBeep;
 
 	private boolean vibrate;
+	
+	private static FakeR fakeR;
 
 	BeepManager(Activity activity) {
+		fakeR = new FakeR(activity);
 		this.activity = activity;
 		this.mediaPlayer = null;
 		updatePrefs();
@@ -106,7 +111,7 @@ final class BeepManager implements MediaPlayer.OnCompletionListener,
 		mediaPlayer.setOnErrorListener(this);
 
 		AssetFileDescriptor file = activity.getResources().openRawResourceFd(
-				R.raw.beep);
+				fakeR.getId("raw", "beep"));
 		try {
 			mediaPlayer.setDataSource(file.getFileDescriptor(),
 					file.getStartOffset(), file.getLength());

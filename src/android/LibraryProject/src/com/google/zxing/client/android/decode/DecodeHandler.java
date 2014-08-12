@@ -16,7 +16,6 @@
 
 package com.google.zxing.client.android.decode;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
 import android.graphics.Bitmap;
@@ -26,15 +25,15 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import com.google.zxing.client.android.CaptureActivity;
-import com.google.zxing.client.android.R;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.FakeR;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
+import com.google.zxing.client.android.CaptureActivity;
 import com.google.zxing.common.HybridBinarizer;
 
 final class DecodeHandler extends Handler {
@@ -47,7 +46,10 @@ final class DecodeHandler extends Handler {
 
 	private boolean running = true;
 
+	private static FakeR fakeR;
+	
 	DecodeHandler(CaptureActivity activity, Map<DecodeHintType, Object> hints) {
+		fakeR = new FakeR(activity);
 		multiFormatReader = new MultiFormatReader();
 		multiFormatReader.setHints(hints);
 		this.activity = activity;
@@ -58,9 +60,9 @@ final class DecodeHandler extends Handler {
 		if (!running) {
 			return;
 		}
-		if (message.what == R.id.decode) {
+		if (message.what == fakeR.getId("id", "decode")) {
 			decode((byte[]) message.obj, message.arg1, message.arg2);
-		} else if (message.what == R.id.quit) {
+		} else if (message.what == fakeR.getId("id", "quit")) {
 			running = false;
 			Looper.myLooper().quit();
 		}
@@ -114,7 +116,7 @@ final class DecodeHandler extends Handler {
 			Log.d(TAG, "Found barcode in " + (end - start) + " ms");
 			if (handler != null) {
 				Message message = Message.obtain(handler,
-						R.id.decode_succeeded, rawResult);
+						fakeR.getId("id", "decode_succeeded"), rawResult);
 				Bundle bundle = new Bundle();
 				//bundleThumbnail(source, bundle);
 				Bitmap grayscaleBitmap = toBitmap(source, source.renderCroppedGreyscaleBitmap());
@@ -125,7 +127,7 @@ final class DecodeHandler extends Handler {
 		}
 		else {
 			if (handler != null) {
-				Message message = Message.obtain(handler, R.id.decode_failed);
+				Message message = Message.obtain(handler, fakeR.getId("id", "decode_failed"));
 				message.sendToTarget();
 			}
 		}
