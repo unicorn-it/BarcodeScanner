@@ -2,7 +2,8 @@ BarcodeScanner show Change
 ==============
 In this Fork, just change the ios platform with four formats `EAN_13 EAN_8 CODE_39 QR_CODE` on the return object and rework the design for French app.
 
-[![](https://adowya.fr/img/barcode.png)]('Screen')
+![](http://adowya.fr/img/barcode.png)
+
 
 Good luck
 
