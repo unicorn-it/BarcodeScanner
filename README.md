@@ -5,6 +5,34 @@ In this Fork, just change the ios platform with four formats `EAN_13 EAN_8 CODE_
 ![](http://adowya.fr/img/barcode.png)
 
 
+barcodeScanner.scan(msg, header, successCallback, errorCallback);
+msg : STRING for compose your message
+header : BOOLEAN if you need header with button action
+
+A full example could be:
+```
+var textFormats = "EAN_13 EAN_8 CODE_39";
+cordova.plugins.barcodeScanner.scan('Veuillez scanner votre article', true,
+        function (result) {
+            if (result.format) {
+                if (result.format == "SwitchScan") {
+                    // Action from button header-right
+                    return;
+                }
+                if (textFormats.match(result.format)) {
+                    // Action if found result
+                } else {
+                    alert("Le format du code n'est pas supporté", false, 'Oups!', 'Ok');
+                }
+            } else {
+                console.log('No result_format');
+            }
+        },
+        function (error) {
+            alert("Scanning failed: " + error);
+        });
+```
+
 Good luck
 
 BarcodeScanner
