@@ -26,6 +26,21 @@
     
     NSString*       callback;
     NSString*       capabilityError;
+    NSString* myarg = [command.arguments objectAtIndex:0];
+    BOOL myarg2 = [[command.arguments objectAtIndex:1] boolValue];
+    NSLog(@"%@", myarg);
+    
+    if (myarg != nil) {
+    } else {
+        [self returnError:@"Arg was null" callback:callback];
+        return;
+    }
+    
+    if (&myarg2 != nil) {
+    } else {
+        [self returnError:@"Arg was null" callback:callback];
+        return;
+    }
     
     callback = command.callbackId;
     
@@ -35,7 +50,7 @@
         return;
     }
     
-    RootViewController * rt = [[RootViewController alloc]initWithPlugin:self callback:callback];
+    RootViewController * rt = [[RootViewController alloc]initWithPlugin:self msg:myarg scanner:&myarg2 callback:callback];
     [self.viewController presentViewController:rt animated:YES completion:^{
         
     }];
@@ -90,24 +105,21 @@
 @implementation RootViewController
 
 @synthesize plugin               = _plugin;
+@synthesize msg                  = _msg;
+@synthesize scanner                  = _scanner;
 @synthesize callback             = _callback;
 
-//- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-//{
-//    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-//    if (self) {
-//        // Custom initialization
-//    }
-//    return self;
-//}
 
-- (id)initWithPlugin:(BarcodeScan *)plugin callback:(NSString*)callback
+- (id)initWithPlugin:(BarcodeScan *)plugin msg:(NSString*)msg scanner:(BOOL*)scanner callback:(NSString*)callback
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
         // Custom initialization
         self.plugin = plugin;
+        self.msg = msg;
+        self.scanner = *(scanner);
         self.callback = callback;
+        
     }
     return self;
 }
@@ -125,13 +137,23 @@
     [scanButton addTarget:self action:@selector(backAction) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:scanButton];
     
+    if(self.scanner){
+        
+        UINavigationBar *_navcon =[[UINavigationBar alloc] init];
+        [_navcon setFrame:CGRectMake(0,0, self.view.bounds.size.width,64)];
+        UINavigationItem *navItem = [[UINavigationItem alloc] init];
+        UIBarButtonItem *rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Manuel" style:UIBarButtonItemStyleDone target:self action:@selector(SwitchAction)];
+        navItem.rightBarButtonItem = rightButton;
+        _navcon.items = @[ navItem ];
+        [self.view addSubview:_navcon];
+        
+    }
     
-    
-    UILabel * labIntroudction= [[UILabel alloc] initWithFrame:CGRectMake(50, 40, 290, 50)];
+    UILabel * labIntroudction= [[UILabel alloc] initWithFrame:CGRectMake(50, self.view.bounds.size.height - 150, self.view.bounds.size.width, 50)];
     labIntroudction.backgroundColor = [UIColor clearColor];
     labIntroudction.numberOfLines=2;
     labIntroudction.textColor=[UIColor blackColor];
-    labIntroudction.text=@"Veuillez scanner votre article";
+    labIntroudction.text=self.msg;
     [self.view addSubview:labIntroudction];
     
     
@@ -176,6 +198,14 @@
     }];
 }
 
+-(void)SwitchAction
+{
+    [self dismissViewControllerAnimated:YES completion:^{
+        [timer invalidate];
+        [self.plugin returnSuccess:@"SwitchScan" format:@"SwitchScan" cancelled:TRUE callback:self.callback];
+    }];
+}
+
 -(void)viewWillAppear:(BOOL)animated
 {
     [self setupCamera];
@@ -215,12 +245,6 @@
         [_session addOutput:self.output];
     }
     
-    // AVMetadataObjectTypeQRCode
-    //_output.metadataObjectTypes =@[AVMetadataObjectTypeQRCode, AVMetadataObjectTypeUPCECode, AVMetadataObjectTypeCode39Code,
-    //                               AVMetadataObjectTypeCode93Code, AVMetadataObjectTypeCode128Code, AVMetadataObjectTypeCode39Mod43Code,
-    //                               AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeEAN8Code, AVMetadataObjectTypePDF417Code,
-    //                               AVMetadataObjectTypeAztecCode];
-    
     _output.metadataObjectTypes =@[AVMetadataObjectTypeEAN13Code, AVMetadataObjectTypeCode39Code, AVMetadataObjectTypeEAN8Code, AVMetadataObjectTypeQRCode];
     
     
@@ -244,15 +268,7 @@
     // Preview
     _preview =[AVCaptureVideoPreviewLayer layerWithSession:self.session];
     _preview.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    //    _preview.frame =CGRectMake(20,110,280,280);
     _preview.frame = self.view.bounds;
-    //    _preview.frame =CGRectMake(
-    //                               0.5 * (rootViewWidth  - minAxis),
-    //                               0.5 * (rootViewHeight - minAxis),
-    //                               minAxis,
-    //                               minAxis
-    //                               );
-    
     [self.view.layer insertSublayer:self.preview atIndex:0];
     
     
@@ -304,6 +320,8 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
     self.plugin = nil;
+    self.msg = nil;
+    self.scanner = nil;
     self.callback = nil;
 }
 

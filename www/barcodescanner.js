@@ -70,7 +70,7 @@
          *    }
          * @param {Function} errorCallback
          */
-        BarcodeScanner.prototype.scan = function (successCallback, errorCallback) {
+        BarcodeScanner.prototype.scan = function (msg, scanner, successCallback, errorCallback) {
             if (errorCallback == null) {
                 errorCallback = function () {
                 };
@@ -86,7 +86,16 @@
                 return;
             }
 
-            exec(successCallback, errorCallback, 'BarcodeScanner', 'scan', []);
+            if(typeof msg != "string"){
+                console.log("BarcodeScanner.scan failure: msg parameter must be a string");
+                return;
+            }
+
+            if(typeof scanner == "undefined"){
+                console.log("BarcodeScanner.scan failure: scanner parameter undefined");
+                return;
+            }
+            exec(successCallback, errorCallback, 'BarcodeScanner', 'scan', [msg, scanner]);
         };
 
         //-------------------------------------------------------------------

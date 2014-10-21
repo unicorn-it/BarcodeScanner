@@ -32,6 +32,9 @@
 @property (nonatomic, retain) UIImageView * line;
 @property (nonatomic, retain) BarcodeScan * plugin;
 @property (nonatomic, retain) NSString * callback;
+@property (nonatomic, retain) NSString * msg;
+@property (readwrite, assign) BOOL scanner;
 
-- (id)initWithPlugin:(BarcodeScan*)plugin callback:(NSString*)callback;
+
+- (id)initWithPlugin:(BarcodeScan*)plugin msg:(NSString*)msg scanner:(BOOL*)scanner callback:(NSString*)callback;
 @end
