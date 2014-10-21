@@ -4,10 +4,12 @@ In this Fork, just change the ios platform with four formats `EAN_13 EAN_8 CODE_
 
 ![](http://adowya.fr/img/barcode.png)
 
-
+```
 barcodeScanner.scan(msg, header, successCallback, errorCallback);
-msg : STRING for compose your message
-header : BOOLEAN if you need header with button action
+```
+
+* msg : STRING for compose your message
+* header : BOOLEAN if you need header with button action
 
 A full example could be:
 ```
