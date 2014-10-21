@@ -35,6 +35,13 @@ cordova.plugins.barcodeScanner.scan('Veuillez scanner votre article', true,
         });
 ```
 
+config.xml:
+```
+  <feature name="BarcodeScanner">
+      <param name="ios-package" value="BarcodeScan" />
+  </feature>
+```
+
 Good luck
 
 BarcodeScanner
