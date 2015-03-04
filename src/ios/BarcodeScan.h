@@ -36,5 +36,5 @@
 @property (readwrite, assign) BOOL scanner;
 
 
-- (id)initWithPlugin:(BarcodeScan*)plugin msg:(NSString*)msg scanner:(BOOL*)scanner callback:(NSString*)callback;
+- (id)initWithPlugin:(BarcodeScan*)plugin msg:(NSString*)msg buttonText:(NSString*)buttonText scanner:(BOOL*)scanner callback:(NSString*)callback;
 @end
