@@ -110,13 +110,14 @@
 @synthesize callback             = _callback;
 
 
-- (id)initWithPlugin:(BarcodeScan *)plugin msg:(NSString*)msg scanner:(BOOL*)scanner callback:(NSString*)callback
+- (id)initWithPlugin:(BarcodeScan *)plugin msg:(NSString*)msg buttonText:(NSString*)buttonText scanner:(BOOL*)scanner callback:(NSString*)callback
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self) {
         // Custom initialization
         self.plugin = plugin;
         self.msg = msg;
+        self.buttonText = buttonText;
         self.scanner = *(scanner);
         self.callback = callback;
         
@@ -130,7 +131,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     
     UIButton * scanButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [scanButton setTitle:@"Annuler" forState:UIControlStateNormal];
+    [scanButton setTitle:@self.buttonText forState:UIControlStateNormal];
     scanButton.frame = CGRectMake(0, self.view.bounds.size.height - 40, self.view.bounds.size.width, 40);
     scanButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     scanButton.backgroundColor = [UIColor colorWithWhite:0.95 alpha:0.65];

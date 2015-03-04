@@ -1,30 +1,23 @@
-BarcodeScanner show Change
+BarcodeScanner
 ==============
-In this Fork, I just change the ios platform with four formats EAN_13 EAN_8 CODE_39 QR_CODE on the return object and reworking the design for French app.
-
-![](http://adowya.fr/img/barcode.png)
+Created this fork to be able to customize the code for android and ios according to our needs.
 
 ```
-barcodeScanner.scan(msg, header, successCallback, errorCallback);
+barcodeScanner.scan(msg, buttonText, header, successCallback, errorCallback);
 ```
 
 * msg : STRING for compose your message
+* buttonText : the text that is shown for the cancel-button
 * header : BOOLEAN if you need header with button action
 
 A full example could be:
 ```
-var textFormats = "EAN_13 EAN_8 CODE_39";
-cordova.plugins.barcodeScanner.scan('Veuillez scanner votre article', true,
+cordova.plugins.barcodeScanner.scan('Scan code here', 'Abbrechen', true,
         function (result) {
             if (result.format) {
                 if (result.format == "SwitchScan") {
                     // Action from button header-right
                     return;
-                }
-                if (textFormats.match(result.format)) {
-                    // Action if found result
-                } else {
-                    alert("Le format du code n'est pas supporté", false, 'Oups!', 'Ok');
                 }
             } else {
                 console.log('No result_format');
@@ -55,8 +48,8 @@ Follows the [Cordova Plugin spec](http://cordova.apache.org/docs/en/3.0.0/plugin
 
 - Android
 - iOS
-- Windows 8
-- Windows Phone 8
+- (Windows 8) wasn't tested by me :)
+- (Windows Phone 8) wasn't tested by me :)
 
 Note: the Android source for this project includes an Android Library Project.
 plugman currently doesn't support Library Project refs, so its been

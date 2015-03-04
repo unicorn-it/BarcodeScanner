@@ -60,17 +60,15 @@
             };
         };
 
-        /**
-         * Read code from scanner.
-         *
-         * @param {Function} successCallback This function will recieve a result object: {
-         *        text : '12345-mock',    // The code that was scanned.
-         *        format : 'FORMAT_NAME', // Code format.
-         *        cancelled : true/false, // Was canceled.
-         *    }
-         * @param {Function} errorCallback
-         */
-        BarcodeScanner.prototype.scan = function (msg, scanner, successCallback, errorCallback) {
+    /**
+     *
+     * @param msg
+     * @param buttonText
+     * @param scanner
+     * @param successCallback
+     * @param errorCallback
+     */
+        BarcodeScanner.prototype.scan = function (msg, buttonText, scanner, successCallback, errorCallback) {
             if (errorCallback == null) {
                 errorCallback = function () {
                 };
@@ -91,11 +89,16 @@
                 return;
             }
 
+            if(typeof buttonText != "string"){
+                console.log("BarcodeScanner.scan failure: buttonText parameter must be a string");
+                return;
+            }
+
             if(typeof scanner == "undefined"){
                 console.log("BarcodeScanner.scan failure: scanner parameter undefined");
                 return;
             }
-            exec(successCallback, errorCallback, 'BarcodeScanner', 'scan', [msg, scanner]);
+            exec(successCallback, errorCallback, 'BarcodeScanner', 'scan', [msg, buttonText, scanner]);
         };
 
         //-------------------------------------------------------------------
