@@ -33,6 +33,7 @@
 @property (nonatomic, retain) BarcodeScan * plugin;
 @property (nonatomic, retain) NSString * callback;
 @property (nonatomic, retain) NSString * msg;
+@property (nonatomic, retain) NSString * buttonText;
 @property (readwrite, assign) BOOL scanner;
 
 
