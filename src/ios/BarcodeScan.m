@@ -27,7 +27,8 @@
     NSString*       callback;
     NSString*       capabilityError;
     NSString* myarg = [command.arguments objectAtIndex:0];
-    BOOL myarg2 = [[command.arguments objectAtIndex:1] boolValue];
+    NSString* myarg2 = [command.arguments objectAtIndex:1];
+    BOOL myarg3 = [[command.arguments objectAtIndex:2] boolValue];
     NSLog(@"%@", myarg);
     
     if (myarg != nil) {
@@ -36,7 +37,7 @@
         return;
     }
     
-    if (&myarg2 != nil) {
+    if (myarg2 != nil) {
     } else {
         [self returnError:@"Arg was null" callback:callback];
         return;
@@ -50,7 +51,7 @@
         return;
     }
     
-    RootViewController * rt = [[RootViewController alloc]initWithPlugin:self msg:myarg scanner:&myarg2 callback:callback];
+    RootViewController * rt = [[RootViewController alloc]initWithPlugin:self msg:myarg buttonText:myarg2 scanner:&myarg3 callback:callback];
     [self.viewController presentViewController:rt animated:YES completion:^{
         
     }];
@@ -131,7 +132,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     
     UIButton * scanButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [scanButton setTitle:@self.buttonText forState:UIControlStateNormal];
+    [scanButton setTitle:self.buttonText forState:UIControlStateNormal];
     scanButton.frame = CGRectMake(0, self.view.bounds.size.height - 40, self.view.bounds.size.width, 40);
     scanButton.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
     scanButton.backgroundColor = [UIColor colorWithWhite:0.95 alpha:0.65];
